@@ -596,7 +596,7 @@ static int raw_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 			   hdrincl ? IPPROTO_RAW : sk->sk_protocol,
 			   inet_sk_flowi_flags(sk) | FLOWI_FLAG_CAN_SLEEP |
 			    (inet->hdrincl ? FLOWI_FLAG_KNOWN_NH : 0),
-			   daddr, saddr, 0, 0);
+			   daddr, saddr, 0, 0, sk->sk_uid);
 
 		err = raw_probe_proto_opt(&rfv, &fl4);
 		if (err)
