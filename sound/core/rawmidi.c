@@ -639,7 +639,7 @@ int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
 	if (params->buffer_size != runtime->buffer_size) {
 		mutex_lock(&runtime->realloc_mutex);
 		newbuf = __krealloc(runtime->buffer, params->buffer_size,
-				  GFP_KERNEL);
+				    GFP_KERNEL);
 		if (!newbuf) {
 			mutex_unlock(&runtime->realloc_mutex);
 			return -ENOMEM;
@@ -677,7 +677,7 @@ int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
 	if (params->buffer_size != runtime->buffer_size) {
 		mutex_lock(&runtime->realloc_mutex);
 		newbuf = __krealloc(runtime->buffer, params->buffer_size,
-				  GFP_KERNEL);
+				    GFP_KERNEL);
 		if (!newbuf) {
 			mutex_unlock(&runtime->realloc_mutex);
 			return -ENOMEM;
