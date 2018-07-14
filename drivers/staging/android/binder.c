@@ -1737,7 +1737,6 @@ static int binder_inc_ref_olocked(struct binder_ref *ref, int strong,
  */
 static bool binder_dec_ref_olocked(struct binder_ref *ref, int strong)
 {
-	struct binder_ref *ref = *ptr_to_ref;
 	if (strong) {
 		if (ref->data.strong == 0) {
 			binder_user_error("%d invalid dec strong, ref %d desc %d s %d w %d\n",
@@ -1759,13 +1758,6 @@ static bool binder_dec_ref_olocked(struct binder_ref *ref, int strong)
 		}
 		ref->data.weak--;
 	}
-<<<<<<< HEAD
-	if (ref->strong == 0 && ref->weak == 0) {
-		binder_delete_ref(ref);
-		*ptr_to_ref = NULL;
-	}
-	return 0;
-=======
 	if (ref->data.strong == 0 && ref->data.weak == 0) {
 		binder_cleanup_ref_olocked(ref);
 		return true;
@@ -1934,7 +1926,6 @@ static int binder_inc_ref_for_node(struct binder_proc *proc,
 		 */
 		kfree(new_ref);
 	return ret;
->>>>>>> 9afced9d5bd3... FROMLIST: binder: refactor binder ref inc/dec for thread safety
 }
 
 static void binder_pop_transaction_ilocked(struct binder_thread *target_thread,
@@ -2327,14 +2318,8 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				break;
 			}
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-<<<<<<< HEAD
-				     "        ref %d desc %d (node %d)\n",
-				     ref->debug_id, ref->desc, ref->node->debug_id);
-			binder_dec_ref(&ref, hdr->type == BINDER_TYPE_HANDLE);
-=======
 				     "        ref %d desc %d\n",
 				     rdata.debug_id, rdata.desc);
->>>>>>> 9afced9d5bd3... FROMLIST: binder: refactor binder ref inc/dec for thread safety
 		} break;
 
 		case BINDER_TYPE_FD: {
@@ -2389,8 +2374,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				       debug_id, (u64)fda->num_fds);
 				continue;
 			}
-			fd_array = (u32 *)(uintptr_t)
-				(parent_buffer + fda->parent_offset);
+			fd_array = (u32 *)(parent_buffer + fda->parent_offset);
 			for (fd_index = 0; fd_index < fda->num_fds; fd_index++)
 				task_close_fd(proc, fd_array[fd_index]);
 		} break;
@@ -2681,7 +2665,6 @@ static int binder_fixup_parent(struct binder_transaction *t,
 		return -EINVAL;
 	}
 	parent_buffer = (u8 *)(parent->buffer -
-			       target_proc->alloc.user_buffer_offset);
 			binder_alloc_get_user_buffer_offset(
 				&target_proc->alloc));
 	*(binder_uintptr_t *)(parent_buffer + bp->parent_offset) = bp->buffer;
@@ -3407,46 +3390,24 @@ static int binder_thread_write(struct binder_proc *proc,
 				break;
 			case BC_RELEASE:
 				debug_string = "Release";
-<<<<<<< HEAD
-				binder_dec_ref(&ref, 1);
-=======
->>>>>>> 9afced9d5bd3... FROMLIST: binder: refactor binder ref inc/dec for thread safety
 				break;
 			case BC_DECREFS:
 			default:
 				debug_string = "DecRefs";
-<<<<<<< HEAD
-				binder_dec_ref(&ref, 0);
-=======
 				break;
 			}
 			if (ret) {
 				binder_user_error("%d:%d %s %d refcount change on invalid ref %d ret %d\n",
 					proc->pid, thread->pid, debug_string,
 					strong, target, ret);
->>>>>>> 9afced9d5bd3... FROMLIST: binder: refactor binder ref inc/dec for thread safety
 				break;
 			}
-		  if (ref == NULL) {
 			binder_debug(BINDER_DEBUG_USER_REFS,
-<<<<<<< HEAD
-			  "binder: %d:%d %s ref deleted",
-			  proc->pid, thread->pid, debug_string);
-		  } else {
-			binder_debug(BINDER_DEBUG_USER_REFS,
-			  "binder: %d:%d %s ref %d desc %d s %d w %d for node %d\n",
-			  proc->pid, thread->pid, debug_string,
-			  ref->debug_id, ref->desc, ref->strong,
-			  ref->weak, ref->node->debug_id);
-		  }
-		  break;
-=======
 				     "%d:%d %s ref %d desc %d s %d w %d\n",
 				     proc->pid, thread->pid, debug_string,
 				     rdata.debug_id, rdata.desc, rdata.strong,
 				     rdata.weak);
 			break;
->>>>>>> 9afced9d5bd3... FROMLIST: binder: refactor binder ref inc/dec for thread safety
 		}
 		case BC_INCREFS_DONE:
 		case BC_ACQUIRE_DONE: {
