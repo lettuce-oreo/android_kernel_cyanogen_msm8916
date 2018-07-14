@@ -78,8 +78,9 @@ extern void __init files_defer_init(void);
 /*
  * The caller must ensure that fd table isn't shared or hold rcu or file lock
  */
-static inline struct file *__fcheck_files(struct files_struct *files, unsigned int fd)
+static inline struct file * fcheck_files(struct files_struct *files, unsigned int fd)
 {
+       	struct file * file = NULL;
 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
 
 	if (fd < fdt->max_fds) {
